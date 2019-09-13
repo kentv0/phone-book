@@ -45,7 +45,7 @@ Get Started
 ```
 ### 4. Change implementations
 * This driver tests the three data structures: ```HashTable.java```, ```BinarySearchTree.java```, and ```BalancedTree.java```
-* Modify ```DictionaryTester.java``` file and uncomment the desired implementation to test on lines 10-12
+* Modify ```DictionaryTester.java``` file and uncomment the desired implementation to test in lines 10-12
     ```java
     ...
     //new Hashtable<Integer, Integer>(SIZE);
