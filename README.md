@@ -13,11 +13,11 @@ Get Started
 ### 2. Compile package
 ```
     $ cd phone-book
-    $ javac data_structures/* ./*.java
+    $ javac ./*.java data_structures/* 
 ```
-### 3. Run test driver
+### 3. Run test driver 1
 ```
-    $ java data_structures.DictionaryTester
+    $ java DictionaryTester
 ```
 ```
     Expected output:
@@ -43,22 +43,52 @@ Get Started
     NO output should follow this line
 
 ```
-### 4. Change implementations
+### 4. Run test driver 2
+```
+    $ java p4Driver
+```
+```
+    Expected output:
+    10000
+    ...
+    869-123-7895: Vo, Kent
+    ...
+    Inserting new value
+    ...
+    434-132-5543: White, Drew
+    ...
+    Removing Vo, Kent
+    ...
+    
+```
+### 5. Change implementations
 * This driver tests the three data structures: ```HashTable.java```, ```BinarySearchTree.java```, and ```BalancedTree.java```
 * Modify ```DictionaryTester.java``` file and uncomment the desired implementation to test in lines 10-12
     ```java
     ...
     //new Hashtable<Integer, Integer>(SIZE);
-    //new BinarySearchTree<Integer, Integer>();
+    new BinarySearchTree<Integer, Integer>();
     new BalancedTree<Integer, Integer>();
     ...
     ```
-* Then repeat step 3 to run test driver
-### 5. Clean
+* Modify ```PhoneBook.java``` file and uncomment the desired implementation to test in lines 20-22 and lines 34-36
+    ```java
+    ...
+        Hashtable<PhoneNumber, String> table;
+        //BinarySearchTree<PhoneNumber, String> table;
+        //BalancedTree<PhoneNumber, String> table;
+    ...
+                  new Hashtable<PhoneNumber, String>(maxSize);
+                //  new BinarySearchTree<PhoneNumber, String>(); 
+                //  new BalancedTree<PhoneNumber, String>();
+    ...
+    ```
+* Then repeat step 3 and 4 to re-run test drivers
+### 6. Clean
 ```
-    $ rm -rf data_structures/*.class ./*.class
+    $ rm -rf ./*.class data_structures/*.class
 ```
-### 6. Debug
+### 7. Debug
 * Ignore the following output during compile
     ```
     Note: Some input files use unchecked or unsafe operations.
