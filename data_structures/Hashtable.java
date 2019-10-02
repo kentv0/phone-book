@@ -36,11 +36,11 @@ public class Hashtable<K, V> implements DictionaryADT<K, V> {
     /**
      * Set the table to a specific size.
      *
-     * @param n the specified size
+     * @param size the specified size
      */
-    public Hashtable(int n) {
+    public Hashtable(int size) {
         currentSize = 0;
-        maxSize = n;
+        maxSize = size;
         modCounter = 0;
         tableSize = (int) (maxSize * 1.3f);
         list =  new LinearList[tableSize];
@@ -68,10 +68,6 @@ public class Hashtable<K, V> implements DictionaryADT<K, V> {
      * @return false if table is full or has duplicate; otherwise true
      */
     public boolean add(K key, V value) {
-        if (isFull()) {
-            return false;
-        }
-
         if ((list[getHashCode(key)] != null) && (list[getHashCode(key)]
                 .contains(new DictionaryNode<K, V>(key, null)))) {
             return false;
@@ -89,15 +85,11 @@ public class Hashtable<K, V> implements DictionaryADT<K, V> {
      * @return true if key/value pair found and removed; otherwise false
      */
     public boolean delete(K key) {
-        if (isEmpty()) {
-            return false;
-        }
-
         if (!list[getHashCode(key)]
                 .contains(new DictionaryNode<K, V>(key, null))) {
             return false;
         }
-        list[getHashCode(key)].removeFirst();
+        list[getHashCode(key)].removeLast();
         currentSize--;
         modCounter--;
         return true;
@@ -183,12 +175,7 @@ public class Hashtable<K, V> implements DictionaryADT<K, V> {
         currentSize = 0;
         for (int i = 0; i < tableSize; i++) {
             list[i] = new LinearList<DictionaryNode<K, V>>();
-        }/**
- * The PhoneBook application Class for the dictionary.
- *
- * @version     0.1.0 01 Dec 2015
- * @author      Kent Vo
- */
+        }
     }
     
     /**
@@ -256,7 +243,7 @@ public class Hashtable<K, V> implements DictionaryADT<K, V> {
             int j = 0;
             modCheck = modCounter;
             for (int i = 0; i < tableSize; i++)
-                for (DictionaryNode n : list[i])
+                for (DictionaryNode<K, V> n : list[i])
                     nodes[j++] = n;
             quickSort(nodes, 0, currentSize - 1);
         }

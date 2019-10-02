@@ -28,8 +28,8 @@ public class PhoneBook {
      *
      * @param maxSize the specified size
      */
-    public PhoneBook(int maxSize) {
-        this.maxSize = maxSize;
+    public PhoneBook(int size) {
+        this.maxSize = size;
         table = 
                 new Hashtable<PhoneNumber, String>(maxSize);
               //  new BinarySearchTree<PhoneNumber, String>(); 
