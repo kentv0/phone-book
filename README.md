@@ -17,7 +17,7 @@ Get Started
 ```
 ### 3. Run test driver
 ```
-    $ java DictionaryTester
+    $ java data_structures.DictionaryTester
 ```
 ```
     Expected output:

@@ -1,111 +1,196 @@
-import data_structures.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Iterator;
-import java.io.*;
+import data_structures.BalancedTree;
+import data_structures.BinarySearchTree;
+import data_structures.Hashtable;
 
-public class PhoneBook <K extends Comparable<K>, V>{
+/**
+ * The PhoneBook application Class for the dictionary.
+ *
+ * @version     0.1.0 01 Dec 2015
+ * @author      Kent Vo
+ */
+public class PhoneBook {
+/* The application to allow the user to interact with the dictionary.
+ * NOTE: the add/delete method does not change the datafile on disk.
+ */
+
+    Hashtable<PhoneNumber, String> table;
+    //BinarySearchTree<PhoneNumber, String> table;
+    //BalancedTree<PhoneNumber, String> table;
+    private int currentSize = 0;
     private int maxSize;
-	private DictionaryADT<K, V> yellowPages;
 
-    // Constructor. There is no argument-less constructor, or default size
+    /**
+     * Set the PhoneBook to a specific size and the data structure to use.
+     *
+     * @param maxSize the specified size
+     */
     public PhoneBook(int maxSize) {
-		this.maxSize = maxSize;
-		yellowPages =	// new Hashtable<K,V>(maxSize);
-				 		 new BinarySearchTree<K,V>();
-						// new BalancedTree<K,V>();
-	}
+        this.maxSize = maxSize;
+        table = 
+                new Hashtable<PhoneNumber, String>(maxSize);
+              //  new BinarySearchTree<PhoneNumber, String>(); 
+              //  new BalancedTree<PhoneNumber, String>();
+    }
     
-    // Reads PhoneBook data from a text file and loads the data into
-    // the PhoneBook. Data is in the form "key=value" where a phoneNumber
-    // is the key and a name in the format "Last, First" is the value.
+    /**
+     * Load data into the PhoneBook from a text file in the key/value format,
+     * where key=PhoneNumber and value=name (Last, First).
+     *
+     * @param filename the name of the text file
+     */
     public void load(String filename) {
-		File file = new File(filename);
-		
-		try {
-			InputStream ips = new FileInputStream(file);
-			InputStreamReader ipsReader = new InputStreamReader(ips);
-			BufferedReader buffReader = new BufferedReader(ipsReader);
-			String txtLine;
-			
-			while((txtLine = buffReader.readLine()) != null) {
-				String[] splitString = txtLine.split("=");
-				PhoneNumber tmp = new PhoneNumber(splitString[0]);
-
-				addEntry(tmp, splitString[1]);
-			}
-			
-			buffReader.close();
-			
-		} catch (Exception e) {
-			System.out.println(e.toString());
-		}
-	}
+       try {
+            BufferedReader bufferReader
+                    = new BufferedReader(new FileReader(filename));
+            String txtLine;
+            while ((txtLine = bufferReader.readLine()) != null) {
+               String splitString[] = txtLine.split("=");
+               PhoneNumber temp = new PhoneNumber(splitString[0]);
+               addEntry(temp, splitString[1]);
+            }
+            System.out.println(currentSize);
+            bufferReader.close();
+        } catch(IOException ex) {
+            System.out.println("IOException caught");
+        }
+    }
     
-    // Returns the name associated with the given PhoneNumber, if it is
-    // in the PhoneBook, null if it is not.
+    /**
+     * Return the name value identified by the provided PhoneNumber key.
+     *
+     * @param number the provided PhoneNumber key
+     * @return the name value; otherwise null if not found
+     */
     public String numberLookup(PhoneNumber number) {
-		return yellowPages.getValue((K) number).toString();
-	}
+        return table.getValue(number); 
+    }
     
-    // Returns the PhoneNumber associated with the given name value.
-    // There may be duplicate values, return the first one found.
-    // Return null if the name is not in the PhoneBook.
+    /**
+     * Return the PhoneNumber key associated with the provided name value.
+     *
+     * @param name the provided name value
+     * @return the first occurence of the PhoneNumber key; otherwise null
+     */
     public PhoneNumber nameLookup(String name) {
-		return (PhoneNumber) yellowPages.getKey((V) name);
-	}
+        return table.getKey(name);
+    }
     
-    // Adds a new PhoneNumber = name pair to the PhoneBook. All
-    // names should be in the form "Last, First".
-    // Duplicate entries are *not* allowed. Return true if the
-    // insertion succeeds otherwise false (PhoneBook is full or
-    // the new record is a duplicate). Does not change the datafile on disk.
+    /**
+     * Add a new PhoneNumber and name pair into the PhoneBook.
+     *
+     * @param number the PhoneNumber to add
+     * @param name the name to add; must be in the form "Last, First"
+     * @return false if PhoneBook is full or duplicate found; otherwise true
+     */
     public boolean addEntry(PhoneNumber number, String name) {
-		if(yellowPages.add((K) number, (V) name))
-			return true;
-			
-		return false;
-	}
+        if (table.add(number, name)) {
+            currentSize++;
+            return true;
+        }
+        return false;
+    }
     
-    // Deletes the record associated with the PhoneNumber if it is
-    // in the PhoneBook. Returns true if the number was found and
-    // its record deleted, otherwise false. Does not change the datafile on disk.
+    /**
+     * Delete a specific PhoneNumber from the PhoneBook.
+     *
+     * @param number the specified PhoneNumber to delete
+     * @return true if the PhoneNumber is found and deleted; otherwise false
+     */
     public boolean deleteEntry(PhoneNumber number) {
-		if(yellowPages.delete((K) number))
-				return true;
-		
-		return false;
-	}
+        if (table.delete(number)) {
+            currentSize--;
+            return true;
+        }
+        return false;
+    }
     
-    // Prints a directory of all PhoneNumbers with their associated
-    // names, in sorted order (ordered by PhoneNumber).
+    /**
+     * Print all PhoneNumber key with the associating name value; order is
+     * sorted by PhoneNumber.
+     */
     public void printAll() {
-		Iterator<K> iter = yellowPages.keys();
-		
-		while(iter.hasNext()) {
-			K tmpKey = iter.next();
-			System.out.println(tmpKey.toString() + ": " + yellowPages.getValue(tmpKey));
-		}
-	}
+        Iterator<String> iterValue = table.values();
+        for (Iterator<PhoneNumber> iterKey = table.keys(); iterKey.hasNext();) {
+            PhoneNumber key = (PhoneNumber)iterKey.next();
+            String value = (String)iterValue.next();
+            System.out.println(key.toString()+ ": " + value);
+        }
+    }
     
-    // Prints all records with the given Area Code in ordered
-    // sorted by PhoneNumber.
+    /**
+     * Print all PhoneNumber key with the associating name value in the
+     * area code provided; order is sorted by PhoneNumber.
+     *
+     * @param code the provided area code
+     */
     public void printByAreaCode(String code) {
-		Iterator<K> iter = yellowPages.keys();
-		
-		while(iter.hasNext()) {
-			PhoneNumber tmpKey = (PhoneNumber) iter.next();
-			if(code.compareTo(tmpKey.areaCode) == 0) 
-				System.out.println(tmpKey.toString() + ": " + yellowPages.getValue((K) tmpKey));
-		}
-			
-	}
+        Iterator<String> iterValue = table.values();
+        for (Iterator<PhoneNumber> iterKey = table.keys(); iterKey.hasNext();) {
+            PhoneNumber key = (PhoneNumber)iterKey.next();
+            String value = (String)iterValue.next();
+            if (key.toString().startsWith(code)) {
+                System.out.println(key.toString() + ": " + value);
+            }
+        }
+    }
     
-    // Prints all of the names in the directory, in sorted order (by name,
-    // not by number). There may be duplicates as these are the values.
+    /**
+     * Print all name value; order is sorted by name.
+     */
     public void printNames() {
-		Iterator<V> iter = yellowPages.values();
-		
-		while(iter.hasNext()) {
-			System.out.println(iter.next());
-		}
-	}
+        String[] nodes = new String[currentSize];
+        int i = 0;
+        System.out.println(currentSize);
+        for (Iterator<String> it = table.values(); it.hasNext();) {
+            nodes[i++] = (String) it.next();
+        }
+        quickSort(nodes, 0, currentSize - 1);
+
+        for (i = 0; i < currentSize; i++) {
+            System.out.println(nodes[i]);
+        }
+    }
+    
+    /**
+     * Quick sort the name value by name.
+     *
+     * @param nodes the string node
+     * @param low the start of the string array
+     * @param high the end of the string array
+     */
+    private void quickSort(String[] nodes, int low, int high) {
+        int left = low;
+        int right = high;
+        int mid = (right - left) / (2 + left);
+        String pivot = nodes[mid];
+        while (left <= right) {
+            while ((nodes[left]).compareTo(pivot) < 0) {
+                left++;
+            }
+
+            while ((nodes[right]).compareTo(pivot) > 0) {
+                right--;
+            }
+
+            if (left <= right) {
+                String temp = nodes[left];
+                nodes[left] = nodes[right];
+                nodes[right] = temp;
+                left++;
+                right--;
+            }
+        }
+
+        if (low < right) {
+            quickSort(nodes, low, right);
+        }
+
+        if (left < high) {
+            quickSort(nodes, left, high);
+        }
+    }
 }
